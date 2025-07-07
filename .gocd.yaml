@@ -1,0 +1,48 @@
+format_version: 10
+
+pipelines:
+  spring-boot-pipeline:
+    group: spring
+    label_template: "${COUNT}"
+    materials:
+      git:
+        url: https://github.com/yourname/demo.git
+        branch: main
+
+    stages:
+      - build:
+          jobs:
+            build-job:
+              tasks:
+                - exec:
+                    command: mvn
+                    arguments: [clean, install]
+
+      - test:
+          jobs:
+            test-job:
+              tasks:
+                - exec:
+                    command: mvn
+                    arguments: [test]
+
+      - package:
+          jobs:
+            package-job:
+              artifacts:
+                - build:
+                    source: target/*.jar
+                    destination: jar
+              tasks:
+                - exec:
+                    command: mvn
+                    arguments: [package]
+
+      - deploy:
+          jobs:
+            deploy-job:
+              tasks:
+                - exec:
+                    command: echo
+                    arguments: ["Pretend we're deploying the JAR here..."]
+
